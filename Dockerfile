@@ -2,6 +2,9 @@
 # https://hub.docker.com/r/nikolaik/python-nodejs
 FROM nikolaik/python-nodejs:python3.11-nodejs18
 
+RUN apt-get update
+RUN apt-get install -y libc6
+
 WORKDIR /code
 
 COPY ./requirements.txt /code/requirements.txt

@@ -6,7 +6,7 @@ const sys = await python('sys')
 await sys.path.insert(0, '.')
 
 const { AutoModelForCausalLM } = await python('ctransformers')
-const llm = await AutoModelForCausalLM.from_pretrained$('marella/gpt-2-ggml', { lib: 'avx' })
+const llm = await AutoModelForCausalLM.from_pretrained('marella/gpt-2-ggml')
 
 const app = express()
 const port = 7860
