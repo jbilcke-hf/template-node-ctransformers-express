@@ -57,6 +57,7 @@ npm run docker
 This script is a shortcut executing the following commands:
 
 ```bash
+docker pull nikolaik/python-nodejs
 docker build -t template-node-python-express .
 docker run -it -p 7860:7860 template-node-python-express
 ```
