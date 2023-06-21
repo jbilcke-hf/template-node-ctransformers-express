@@ -1,45 +1,32 @@
-# pick your favorite Python + Node bundle from here:
-# https://hub.docker.com/r/nikolaik/python-nodejs
-FROM nikolaik/python-nodejs:python3.11-nodejs18
+FROM python:latest
 
-RUN apt-get update
-RUN apt-get install -y libc6
+ENV PYTHONUNBUFFERED 1
 
-WORKDIR /code
+EXPOSE 7860
 
-COPY ./requirements.txt /code/requirements.txt
+RUN apt update
 
-RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
+RUN apt install curl
 
-# if no binary is available for your env, use --no-binary
-# RUN pip install ctransformers --no-binary ctransformers
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
 
-# or if you want to enable GPU with CUDA:
-# RUN CT_CUBLAS=1 pip install ctransformers --no-binary ctransformers
+RUN apt install nodejs
 
-# Set up a new user named "user" with user ID 1000
-RUN useradd -o -u 1000 user
-
-# Switch to the "user" user
+RUN useradd -m -u 1000 user
 USER user
-
-# Set home to the user's home directory
 ENV HOME=/home/user \
 	PATH=/home/user/.local/bin:$PATH
 
-# Set the working directory to the user's home directory
 WORKDIR $HOME/app
 
-# Install app dependencies
-# A wildcard is used to ensure both package.json AND package-lock.json are copied
-# where available (npm@5+)
-COPY --chown=user package*.json $HOME/app
+COPY --chown=user package*.json .
 
 RUN npm install
 
+COPY requirements.txt ./
+RUN pip install --upgrade pip && \
+    pip install -r requirements.txt
 
-# Copy the current directory contents into the container at $HOME/app setting the owner to the user
-COPY --chown=user . $HOME/app
+COPY --chown=user . .
 
-EXPOSE 7860
 CMD [ "npm", "run", "start" ]
